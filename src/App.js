@@ -9,6 +9,7 @@ function App() {
         <Navbar />
         <Routes>
           <Route path="/" element={<Homepage />} />
+          {/* <Route path="/" element={<Gallery images={data} />} /> */}
         </Routes>
       </Router>
     </div>

@@ -2,39 +2,41 @@ import React, { useEffect, useState } from "react"
 import { Image } from "../components/Image"
 import axios from "axios"
 import { URL, ACCESS_KEY } from "../utils/Important"
-import "./Gallery.css"
+import { fetchDataFromUnsplash } from "../components/FetchDataFromUnsplash"
 
 export const Images = () => {
   const [data, setData] = useState([])
-  const axiosUrl = `${URL}?client_id=${ACCESS_KEY}`
+  const axiosUrl = `${URL}/photos/?client_id=${ACCESS_KEY}`
 
-  // const tweakData = () => {
-  //   const newData = data.map((imageObject) => {
+  useEffect(
+    () => async () => {
+      setData(await fetchDataFromUnsplash(axiosUrl))
+    },
+    []
+  )
 
-  //   })
-  // }
+  const groupImagesIntoColumns = () => {
+    const rows = []
+    const imagesPerRow = 3
+    for (let i = 0; i < data.length; i += imagesPerRow) {
+      rows.push(data.slice(i, i + imagesPerRow))
+    }
+    return rows
+  }
 
-  useEffect(() => {
-    axios
-      .get(axiosUrl)
-      .then((res) => {
-        console.log(res.data)
-        setData(res.data)
-      })
-      .catch((err) => console.log(err))
-  }, [])
+  const columnsOfImages = groupImagesIntoColumns()
+
   return (
-    <div>
-      {/* <div className="row row-cols-1 row-cols-md-3 g-4"> */}
-      <div className="gallery">
-        {data.map((image) => {
-          return (
-            <div className="col" id={image.id}>
-              <Image url={image.urls.thumb} />
-            </div>
-          )
-        })}
-      </div>
+    <div className="row">
+      {columnsOfImages.map((columnOfImages) => {
+        return (
+          <div className="col-4">
+            {columnOfImages.map((image) => (
+              <Image image={image} />
+            ))}
+          </div>
+        )
+      })}
     </div>
   )
 }

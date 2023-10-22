@@ -1,11 +1,15 @@
 import React from "react"
 import { NavLink } from "react-router-dom"
 import { Images } from "./Images"
+import { UpperSection } from "../components/UpperSection"
 
 export const Homepage = () => {
   return (
-    <div className="container">
-      <Images />
-    </div>
+    <>
+      <UpperSection />
+      <div className="container">
+        <Images />
+      </div>
+    </>
   )
 }
