@@ -1,25 +1,25 @@
-import React, { useEffect, useState } from "react"
+import React, { useContext } from "react"
 import { Image } from "../components/Image"
-import axios from "axios"
-import { URL, ACCESS_KEY } from "../utils/Important"
-import { fetchDataFromUnsplash } from "../components/FetchDataFromUnsplash"
+import { DataContext } from "../App"
 
 export const Images = () => {
-  const [data, setData] = useState([])
-  const axiosUrl = `${URL}/photos/?client_id=${ACCESS_KEY}`
-
-  useEffect(
-    () => async () => {
-      setData(await fetchDataFromUnsplash(axiosUrl))
-    },
-    []
-  )
-
+  const { data } = useContext(DataContext)
+  const imagesPerRow = 3
   const groupImagesIntoColumns = () => {
     const rows = []
-    const imagesPerRow = 3
-    for (let i = 0; i < data.length; i += imagesPerRow) {
+
+    const numberOfIterations = data.length - (data.length % imagesPerRow)
+    let i = 0,
+      j = 0
+    for (; i < numberOfIterations; i += imagesPerRow) {
       rows.push(data.slice(i, i + imagesPerRow))
+    }
+    if (data.length % imagesPerRow !== 0) {
+      while (j < rows.length && i < data.length) {
+        rows[j].push(data[i])
+        j++
+        i++
+      }
     }
     return rows
   }
@@ -30,7 +30,7 @@ export const Images = () => {
     <div className="row">
       {columnsOfImages.map((columnOfImages) => {
         return (
-          <div className="col-4">
+          <div className={`col-${Math.ceil(12 / imagesPerRow)}`}>
             {columnOfImages.map((image) => (
               <Image image={image} />
             ))}
